@@ -157,3 +157,11 @@ class SettingsWindow(tk.Toplevel):
         if hexcode:
             self.color_barra_menu = hexcode
             self.swatch_menu.configure(bg=hexcode)
+
+    def _choose_font_color(self):
+        _, hexcode = colorchooser.askcolor(
+            color=self.color_letra, title="Color de letra", parent=self
+        )
+        if hexcode:
+            self.color_letra = hexcode
+            self.swatch_font.configure(bg=hexcode)
