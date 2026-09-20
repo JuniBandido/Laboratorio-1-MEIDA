@@ -123,3 +123,37 @@ class SettingsWindow(tk.Toplevel):
         ttk.Button(btn_frame, text="Guardar", command=self._on_save).pack(side="left", padx=6)
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="left", padx=6)
 
+    def _load_values(self):
+        c = self.working_config
+        self.var_nombre.set(c.get("nombre_usuario", ""))
+        self.var_tema.set(c.get("tema_interfaz", "claro"))
+
+        idioma_code = c.get("idioma", "es/es-ES")
+        display = next((d for code, d in IDIOMAS if code == idioma_code), IDIOMAS[0][1])
+        self.var_idioma_display.set(display)
+
+        try:
+            self.var_tamano.set(int(c.get("tamaño_fuente", 12)))
+        except (ValueError, TypeError):
+            self.var_tamano.set(12)
+
+        self.color_barra_menu = c.get("color_barra_menu", "#2c3e50")
+        self.color_letra = c.get("color_letra", "#000000")
+        self.swatch_menu.configure(bg=self.color_barra_menu)
+        self.swatch_font.configure(bg=self.color_letra)
+
+        self._foto_relativa_actual = c.get("foto_perfil", "")
+        if self._foto_relativa_actual:
+            full = self.config_manager.resolve_profile_picture_path(self._foto_relativa_actual)
+            texto = os.path.basename(self._foto_relativa_actual) if full else "(archivo no encontrado)"
+            self.lbl_foto.configure(text=texto)
+        else:
+            self.lbl_foto.configure(text="(ninguna)")
+
+    def _choose_menu_color(self):
+        _, hexcode = colorchooser.askcolor(
+            color=self.color_barra_menu, title="Color de la barra de menú", parent=self
+        )
+        if hexcode:
+            self.color_barra_menu = hexcode
+            self.swatch_menu.configure(bg=hexcode)
