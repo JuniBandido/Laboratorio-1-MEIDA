@@ -175,3 +175,65 @@ class SettingsWindow(tk.Toplevel):
         if path:
             self._nueva_foto_origen = path
             self.lbl_foto.configure(text=os.path.basename(path))
+
+    def _on_save(self):
+        nombre = self.var_nombre.get().strip()
+        if not nombre:
+            messagebox.showerror("Datos inválidos", "El nombre de usuario no puede estar vacío.", parent=self)
+            return
+
+        try:
+            tamano = int(self.var_tamano.get())
+            if tamano <= 0:
+                raise ValueError
+        except (ValueError, tk.TclError):
+            messagebox.showerror(
+                "Datos inválidos", "El tamaño de fuente debe ser un número entero positivo.", parent=self
+            )
+            return
+
+        idioma_display = self.var_idioma_display.get()
+        idioma_code = next((code for code, d in IDIOMAS if d == idioma_display), "es/es-ES")
+
+        foto_relativa = self._foto_relativa_actual
+        if self._nueva_foto_origen:
+            nueva_relativa = self.config_manager.import_profile_picture(self._nueva_foto_origen)
+            if nueva_relativa is None:
+                messagebox.showwarning(
+                    "Foto de perfil",
+                    "No se pudo copiar la imagen seleccionada (revise permisos o espacio en disco). "
+                    "Se conservará la foto anterior.",
+                    parent=self,
+                )
+            else:
+                foto_relativa = nueva_relativa
+
+        nueva_config = {
+            "nombre_usuario": nombre,
+            "tema_interfaz": self.var_tema.get(),
+            "idioma": idioma_code,
+            "tamaño_fuente": str(tamano),
+            "color_barra_menu": self.color_barra_menu,
+            "color_letra": self.color_letra,
+            "foto_perfil": foto_relativa,
+        }
+
+        ok, status = self.config_manager.save(nueva_config)
+        if ok:
+            messagebox.showinfo("Settings", "Configuración guardada correctamente.", parent=self)
+            self.on_saved(nueva_config)
+            self.destroy()
+        elif status == "sin_permiso_escritura":
+            messagebox.showerror(
+                "Error al guardar",
+                "No se tienen permisos para escribir el archivo de configuración.\n"
+                "Los cambios NO se guardaron; el archivo anterior permanece intacto.",
+                parent=self,
+            )
+        else:
+            messagebox.showerror(
+                "Error al guardar",
+                f"No se pudo guardar la configuración.\nDetalle: {status}\n"
+                "El archivo anterior permanece intacto.",
+                parent=self,
+            )
