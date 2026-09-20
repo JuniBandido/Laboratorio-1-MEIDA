@@ -237,3 +237,28 @@ class SettingsWindow(tk.Toplevel):
                 "El archivo anterior permanece intacto.",
                 parent=self,
             )
+
+class MainApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Mi Aplicación - Configuración de Usuario")
+        self.geometry("580x420")
+
+        self.config_manager = ConfigManager()
+        self.current_config, status = self._safe_initial_load()
+
+        self._build_menu()
+        self._build_body()
+        self._apply_theme()
+
+        if status != "ok":
+            self.after(200, lambda: messagebox.showwarning(
+                "Configuración", STATUS_MESSAGES.get(status, status)
+            ))
+
+    def _safe_initial_load(self):
+        try:
+            return self.config_manager.load()
+        except Exception:
+            traceback.print_exc()
+            return dict(self.config_manager.DEFAULTS), "error_lectura"
