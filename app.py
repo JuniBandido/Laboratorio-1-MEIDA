@@ -165,3 +165,13 @@ class SettingsWindow(tk.Toplevel):
         if hexcode:
             self.color_letra = hexcode
             self.swatch_font.configure(bg=hexcode)
+
+    def _choose_picture(self):
+        path = filedialog.askopenfilename(
+            title="Seleccionar foto de perfil",
+            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos los archivos", "*.*")],
+            parent=self,
+        )
+        if path:
+            self._nueva_foto_origen = path
+            self.lbl_foto.configure(text=os.path.basename(path))
