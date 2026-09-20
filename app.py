@@ -32,3 +32,20 @@ IDIOMAS = [
     ("en/en-US", "English (en/en-US)"),
 ]
 
+class SettingsWindow(tk.Toplevel):
+    def __init__(self, master, config_manager: ConfigManager, current_config: dict, on_saved):
+        super().__init__(master)
+        self.title("Settings")
+        self.resizable(False, False)
+        self.config_manager = config_manager
+        self.on_saved = on_saved
+        self.working_config = dict(current_config)
+
+        self.transient(master)
+        self.grab_set()
+
+        self._nueva_foto_origen = None
+        self._foto_relativa_actual = ""
+
+        self._build_form()
+        self._load_values()
