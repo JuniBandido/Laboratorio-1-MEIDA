@@ -5,7 +5,6 @@ import time
 class ConfigError(Exception):
     pass
 
-
 class ConfigManager:
     DEFAULTS = {
         "nombre_usuario": "Usuario",
