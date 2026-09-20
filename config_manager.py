@@ -162,3 +162,30 @@ class ConfigManager:
         except OSError as e:
             self._cleanup_tmp()
             return False, f"error_escritura: {e}"
+
+    def _cleanup_tmp(self):
+        try:
+            if os.path.exists(self.tmp_path):
+                os.remove(self.tmp_path)
+        except OSError:
+            pass
+
+    def import_profile_picture(self, source_path):
+        try:
+            if not os.path.isfile(source_path):
+                return None
+            ext = os.path.splitext(source_path)[1].lower()
+            if ext not in (".png", ".jpg", ".jpeg", ".gif", ".bmp"):
+                ext = ".png"
+            dest_name = f"perfil_{int(time.time())}{ext}"
+            dest_path = os.path.join(self.profile_pics_dir, dest_name)
+            shutil.copy2(source_path, dest_path)
+            return os.path.join("profile_pics", dest_name)
+        except OSError:
+            return None
+
+    def resolve_profile_picture_path(self, relative_path):
+        if not relative_path:
+            return None
+        full_path = os.path.join(self.base_dir, relative_path)
+        return full_path if os.path.exists(full_path) else None
