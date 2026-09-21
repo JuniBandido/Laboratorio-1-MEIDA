@@ -387,3 +387,24 @@ class MainApp(tk.Tk):
             self.menubar.configure(bg=color_menu, fg="#ffffff", activebackground=color_menu)
         except tk.TclError:
             pass
+
+def main():
+    try:
+        app = MainApp()
+        app.mainloop()
+    except Exception:
+        traceback.print_exc()
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showerror(
+                "Error fatal",
+                "Ocurrió un error inesperado y la aplicación debe cerrarse.\n"
+                "Revise la consola para más detalles.",
+            )
+        except Exception:
+            pass
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
