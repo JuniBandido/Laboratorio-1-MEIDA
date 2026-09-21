@@ -324,3 +324,39 @@ class MainApp(tk.Tk):
         self.status_bar.pack(fill="x", side="bottom")
 
         self._refresh_body()
+
+    def open_settings(self):
+        SettingsWindow(self, self.config_manager, self.current_config, self._on_settings_saved)
+
+    def _on_settings_saved(self, nueva_config):
+        self.current_config = nueva_config
+        self._apply_theme()
+        self._refresh_body()
+
+    def _refresh_body(self):
+        c = self.current_config
+        self.lbl_usuario.configure(text=f"Usuario: {c.get('nombre_usuario', '')}")
+        self.lbl_tema.configure(text=f"Tema: {c.get('tema_interfaz', '')}")
+        idioma_display = next((d for code, d in IDIOMAS if code == c.get("idioma")), c.get("idioma", ""))
+        self.lbl_idioma.configure(text=f"Idioma: {idioma_display}")
+        self.status_bar.configure(text=f"Archivo de configuración: {self.config_manager.config_path}")
+        self._load_profile_picture()
+
+    def _load_profile_picture(self):
+        rel = self.current_config.get("foto_perfil", "")
+        full_path = self.config_manager.resolve_profile_picture_path(rel) if rel else None
+
+        if full_path and PIL_AVAILABLE:
+            try:
+                img = Image.open(full_path)
+                img.thumbnail((96, 96))
+                self._photo_ref = ImageTk.PhotoImage(img)
+                self.foto_canvas.configure(image=self._photo_ref, text="")
+                return
+            except Exception:
+                pass  # si falla la carga de la imagen, caemos al texto de abajo
+
+        if full_path:
+            self.foto_canvas.configure(image="", text=f"Foto: {os.path.basename(full_path)}")
+        else:
+            self.foto_canvas.configure(image="", text="(sin foto de perfil)")
