@@ -262,3 +262,33 @@ class MainApp(tk.Tk):
         except Exception:
             traceback.print_exc()
             return dict(self.config_manager.DEFAULTS), "error_lectura"
+
+    def _build_menu(self):
+        menubar = tk.Menu(self)
+
+        m_archivo = tk.Menu(menubar, tearoff=0)
+        for label in ("Nuevo", "Abrir...", "Guardar", "Guardar como..."):
+            m_archivo.add_command(label=label, command=lambda l=label: self._simulado(l))
+        m_archivo.add_separator()
+        m_archivo.add_command(label="Salir", command=self.destroy)
+        menubar.add_cascade(label="Archivo", menu=m_archivo)
+
+        m_edicion = tk.Menu(menubar, tearoff=0)
+        for label in ("Deshacer", "Rehacer", "Cortar", "Copiar", "Pegar"):
+            m_edicion.add_command(label=label, command=lambda l=label: self._simulado(l))
+        menubar.add_cascade(label="Edición", menu=m_edicion)
+
+        m_ver = tk.Menu(menubar, tearoff=0)
+        for label in ("Zoom +", "Zoom -", "Pantalla completa"):
+            m_ver.add_command(label=label, command=lambda l=label: self._simulado(l))
+        menubar.add_cascade(label="Ver", menu=m_ver)
+
+        m_settings = tk.Menu(menubar, tearoff=0)
+        m_settings.add_command(label="Abrir Settings...", command=self.open_settings)
+        menubar.add_cascade(label="Settings", menu=m_settings)
+
+        self.config(menu=menubar)
+        self.menubar = menubar
+
+    def _simulado(self, label):
+        messagebox.showinfo(label, f"'{label}' es una opción simulada (sin funcionalidad real).")
