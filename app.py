@@ -292,3 +292,35 @@ class MainApp(tk.Tk):
 
     def _simulado(self, label):
         messagebox.showinfo(label, f"'{label}' es una opción simulada (sin funcionalidad real).")
+
+    def _build_body(self):
+        self.body = tk.Frame(self)
+        self.body.pack(fill="both", expand=True)
+
+        self.lbl_titulo = tk.Label(self.body, text="Vista previa de configuración", font=("Segoe UI", 14, "bold"))
+        self.lbl_titulo.pack(pady=(16, 8))
+
+        self.lbl_usuario = tk.Label(self.body, text="")
+        self.lbl_usuario.pack(pady=2)
+
+        self.lbl_tema = tk.Label(self.body, text="")
+        self.lbl_tema.pack(pady=2)
+
+        self.lbl_idioma = tk.Label(self.body, text="")
+        self.lbl_idioma.pack(pady=2)
+
+        self.foto_canvas = tk.Label(self.body)
+        self.foto_canvas.pack(pady=8)
+
+        hint = tk.Label(
+            self.body,
+            text='Use el menú "Settings" para editar y guardar la configuración.',
+            font=("Segoe UI", 9, "italic"),
+        )
+        hint.pack(pady=(10, 0))
+        self.hint_label = hint
+
+        self.status_bar = tk.Label(self, text="", anchor="w", relief="sunken")
+        self.status_bar.pack(fill="x", side="bottom")
+
+        self._refresh_body()
