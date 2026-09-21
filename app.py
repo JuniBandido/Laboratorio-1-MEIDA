@@ -360,3 +360,30 @@ class MainApp(tk.Tk):
             self.foto_canvas.configure(image="", text=f"Foto: {os.path.basename(full_path)}")
         else:
             self.foto_canvas.configure(image="", text="(sin foto de perfil)")
+
+    def _apply_theme(self):
+        c = self.current_config
+        tema = c.get("tema_interfaz", "claro")
+        color_letra = c.get("color_letra", "#000000")
+        color_menu = c.get("color_barra_menu", "#2c3e50")
+        try:
+            tamano = int(c.get("tamaño_fuente", 12))
+        except (ValueError, TypeError):
+            tamano = 12
+
+        bg = "#f4f4f4" if tema == "claro" else "#1e1e1e"
+
+        self.body.configure(bg=bg)
+        widgets = (self.lbl_titulo, self.lbl_usuario, self.lbl_tema, self.lbl_idioma,
+                   self.foto_canvas, self.hint_label)
+        for w in widgets:
+            w.configure(bg=bg, fg=color_letra)
+
+        self.lbl_titulo.configure(font=("Segoe UI", tamano + 2, "bold"))
+        for w in (self.lbl_usuario, self.lbl_tema, self.lbl_idioma):
+            w.configure(font=("Segoe UI", tamano))
+
+        try:
+            self.menubar.configure(bg=color_menu, fg="#ffffff", activebackground=color_menu)
+        except tk.TclError:
+            pass
